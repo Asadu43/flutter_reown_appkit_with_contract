@@ -94,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-
     // Create ReownAppKitModal
     _appKitModal = ReownAppKitModal(
       context: context,
@@ -119,23 +118,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  /// Add the entire test['eip155'] list to Reown's main registry
-  Future<void> _addBscTestnet() async {
-    // Initialize the modal, then do setState
-    _appKitModal.init().then((_) {
-      // test is our map defined above
-      final testNetworks = test['eip155'] ?? [];
-      ReownAppKitModalNetworks.addSupportedNetworks('eip155', testNetworks);
-      setState(() {});
-      // If you want to auto-add test networks after init:
-      // _addBscTestnet();
-      debugPrint("BSC testnet and other test networks added to Reown registry");
-    });
-  }
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -165,15 +154,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 appKitModal: _appKitModal,
               ),
             ),
+            ElevatedButton(
+              onPressed: () {
+                if (_appKitModal.isConnected) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            HomePage(appKitModal: _appKitModal),
+                      ));
+                }else {
+                  const snackBar = SnackBar(content: Text('Please connect metamask'));
 
-            _appKitModal.isConnected
-                ? ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(appKitModal: _appKitModal),));
-                    },
-                    child: const Text("Go to Next screen"),
-                  )
-                : const SizedBox(),
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              },
+              child: const Text("Go to Next screen"),
+            )
           ],
         ),
       ),

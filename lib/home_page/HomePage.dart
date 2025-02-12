@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:reown_appkit/reown_appkit.dart';
-import 'package:web3dart/web3dart.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -296,7 +295,7 @@ class _HomePageState extends State<HomePage> {
         functionName: fnName,
         parameters: params,
         topic: widget.appKitModal.session?.topic,
-        chainId: '11155111',
+        chainId: widget.appKitModal.session!.chainId,
       );
       return result;
     } catch (e) {
@@ -401,11 +400,11 @@ class _HomePageState extends State<HomePage> {
   /// Open transaction in BscScan
   Future<void> _openTransactionLink(String txHash) async {
     final Uri url = Uri.parse("$_bscScanTxBaseUrl$txHash");
-    if (await canLaunchUrl(url)) {
+    // if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      debugPrint("Could not open $url");
-    }
+    // } else {
+    //   debugPrint("Could not open $url");
+    // }
   }
 
   /// Build transaction history list
